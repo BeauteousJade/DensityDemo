@@ -1,8 +1,10 @@
 package com.jade.densitydemo
 
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +18,15 @@ class MainActivity : AppCompatActivity() {
         findViewById<View>(R.id.button).setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 val value = resources.getDimensionPixelOffset(R.dimen.width)
+                val typedValue = TypedValue()
+                resources.getValue(R.dimen.width, typedValue, true)
+                val rawValue = typedValue.data
+                Log.i(
+                    "pby123",
+                    "rawValue to 2:${Integer.toBinaryString(rawValue)}, value to 2:${
+                        Integer.toBinaryString(value)
+                    } "
+                )
                 Log.i(
                     "pby123",
                     "value:${value}px, ${value.pxToDp(this@MainActivity)}dp, screenWidthDp:${getScreenWidthDp()}"
@@ -36,6 +47,12 @@ class MainActivity : AppCompatActivity() {
 
             })
         }
+    }
+
+    override fun getResources(): Resources {
+        val resources = super.getResources()
+        resources.setDensity()
+        return resources
     }
 
     private fun setupDensity() {

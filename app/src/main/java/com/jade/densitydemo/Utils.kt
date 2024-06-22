@@ -1,6 +1,7 @@
 package com.jade.densitydemo
 
 import android.content.Context
+import android.content.res.Resources
 import kotlin.math.min
 
 
@@ -8,12 +9,12 @@ import kotlin.math.min
  * 修改density
  */
 fun Context.setDensity() {
-    setDensityInternal()
+    resources?.setDensity()
 }
 
-private fun Context.setDensityInternal() {
-    val resource = resources ?: return
-    val metrics = resource.displayMetrics ?: return
+
+fun Resources.setDensity() {
+    val metrics = displayMetrics ?: return
 
     val width = metrics.widthPixels
     val height = metrics.heightPixels + getNavigationBarHeight()
@@ -29,20 +30,25 @@ private fun Context.setDensityInternal() {
     metrics.densityDpi = targetDensityDpi
 
     // 更新configuration的信息
-    val configuration = resource.configuration ?: return
+    val configuration = configuration ?: return
     configuration.screenWidthDp = (width / targetDensity)
     configuration.screenHeightDp = (height / targetDensity)
     configuration.densityDpi = targetDensityDpi
 
     // 修复dimen获取不对的问题
-//    resource.updateConfiguration(configuration, metrics)
+    updateConfiguration(configuration, metrics)
 }
 
 fun Context.getNavigationBarHeight(): Int {
+    return resources?.getNavigationBarHeight() ?: 0
+}
+
+
+fun Resources.getNavigationBarHeight(): Int {
     var result = 0
-    val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+    val resourceId = getIdentifier("navigation_bar_height", "dimen", "android")
     if (resourceId > 0) {
-        result = resources.getDimensionPixelSize(resourceId)
+        result = getDimensionPixelSize(resourceId)
     }
     return result
 }
